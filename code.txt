@@ -1,0 +1,80 @@
+### Installation
+```bash
+pip install pip install -r https://raw.githubusercontent.com/xuwei95/ezdata/main/requirements.txt
+pip install -r requirements.txt
+```
+### Production-Ready Code
+```python
+import time
+import os
+import json
+from ezdata import EzData
+from ezdata import EzAgentic
+from ezdata import EzLogger
+from ezdata import EzLLM
+
+# Create a logger
+logger = EzLogger(filename='ezdata.log', level='INFO')
+logger.start_logging()
+
+# Create an ezdata instance
+ezdata = EzData(data_source='https://example.com/data.csv')
+try:
+    # Check if data exists
+    data_info = ezdata.get_data_info()
+except Exception as e:
+    logger.error(f"Failed to load data: {e}")
+    raise
+
+# Create an agentic workflow
+agentic = EzAgentic(workflow_name='my_workflow', memory_size=1024, memory_address='/tmp/agentic')
+try:
+    # Load the model
+    model = agentic.load_model('your_model_name')
+    # Set up LLM
+    llm = EzLLM(model_name="davinci", temperature=0.7)
+    agentic.setup_llm(llm)
+except Exception as e:
+    logger.error(f"Failed to load model: {e}")
+    raise
+
+# Define a question-answering function
+def question_answerer(prompt):
+    try:
+        response = agentic.query(prompt)
+        return response
+    except Exception as e:
+        logger.error(f"Failed to answer question: {e}")
+        raise
+
+# Process the data and save results to JSON
+start_time = time.time()
+data_records = ezdata.get_data_records()
+business_metrics = []
+for record in data_records:
+    prompt = f"What is the value of X for Y = {record['Y']}?"
+    answer = question_answerer(prompt)
+    business_metrics.append({'X': record['X'], 'ROI': float(answer)})  # ROI calculation simplified
+    logger.info(f"Processed record: {record}")
+logger.info(f"Processing took {time.time() - start_time:.2f} seconds")
+
+# Save results to JSON
+with open('results.json', 'w') as f:
+    json.dump(business_metrics, f)
+logger.info('Results saved to results.json')
+
+# Display business metrics
+for metric in business_metrics[:5]:  # Show top 5 metrics
+    logger.info(f"X: {metric['X']}, ROI: {metric['ROI']}")
+
+logger.info('Finished running ezdata workflow')
+logger.end_logging()
+```
+### Example Usage
+1. Install `ezdata` using the provided `requirements.txt` file.
+2. Run the code and observe the logging output.
+3. The code will process the data, run interactive data analysis using LLMs, and save results to a JSON file called `results.json`.
+4. The top 5 business metrics (ROI) will be displayed in the console.
+5. You can modify the code to suit your specific needs and data sources.
+
+Note: Replace `your_model_name` with the actual name of your loaded model, and adjust the LLM settings as necessary. This code serves as a basic example and may require further modification to fit your specific requirements.
