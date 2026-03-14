@@ -18,3 +18,5 @@ https://github.com/karpathy/autoresearch
 https://github.com/bytedance/deer-flow
 https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk
 https://github.com/langchain-ai/langgraph
+https://github.com/ChaituRajSagar/gemini-youtube-automation
+https://github.com/gauravdhiman/vercel-agno-integration
